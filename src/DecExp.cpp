@@ -190,22 +190,6 @@ void display1(void){
 	static GLfloat LightPos2[]  = { 500.0, 500.0,-650.0, 1.0 };
 	static GLfloat LightPos3[]  = {-500.0, 500.0, 350.0, 1.0 };
 	static GLfloat LightPos4[]  = {-500.0, 500.0,-650.0, 1.0 };
-	static bool lflag = true;
-	float lspeed = 5.0;
-	if(LightPos1[1]<200) lflag = false;
-	if(800<LightPos1[1]) lflag = true;
-	if(lflag){
-		LightPos1[1] -= lspeed;
-		LightPos2[1] -= lspeed;
-		LightPos3[1] -= lspeed;
-		LightPos4[1] -= lspeed;
-	}
-	else{
-		LightPos1[1] += lspeed;
-		LightPos2[1] += lspeed;
-		LightPos3[1] += lspeed;
-		LightPos4[1] += lspeed;
-	}
 	/* Ambient Light */
 	glLightfv(GL_LIGHT0, GL_POSITION, LightPos0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT,  LightClr0);
@@ -570,7 +554,6 @@ void keyboard(unsigned char key, int x, int y){
 	switch(key){
 		case 'q': /* Quit */
 		case 'Q':
-		case '\033':
 			printf("\033[39m\033[49m\n");
 			exit(0);
 		case 'm': /* Change Mouse Mode */
@@ -630,7 +613,6 @@ void keyboard(unsigned char key, int x, int y){
 			if(AMODE==0) glNeutInit();
 			if(AMODE==1) glNeutInit();
 			if(AMODE==2) glPhotInit();
-			glHistInit();
 			glutIdleFunc(idle);
 			break;
 		case 'h': /* Stock Histgram */
@@ -695,6 +677,14 @@ void keyboard(unsigned char key, int x, int y){
 			if(AMODE==2 && OMODE==2){
 				if(LFLAG) LFLAG = false;
 				else LFLAG = true;
+				glutIdleFunc(idle);
+			}
+			break;
+		case 'd': /* TOF vs En 2D Histgram */
+		case 'D':
+			if(AMODE==0){
+				if(DFLAG) DFLAG = false;
+				else DFLAG = true;
 				glutIdleFunc(idle);
 			}
 			break;

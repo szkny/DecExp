@@ -7,7 +7,7 @@
 #include"define.h"
 
 
-/* lorentzian に従って17Nの中性子のエネルギーを作る関数(逆関数法) */
+/* lorentzian に従って17Nの中性子のエネルギー[MeV]を作る関数(逆関数法) */
 double NeutronEnergy_17N(){
 	
 	/* 17Nのβ遅発中性子のエネルギーと分岐比とガンマ幅 */

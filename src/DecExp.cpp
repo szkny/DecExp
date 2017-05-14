@@ -12,7 +12,7 @@
 #include<string.h>
 
 #include<GL/glut.h>
-#include<DecExp.h>
+#include<GraphDecExp.h>
 
 /* Number of Windows */
 const int WinNum = 2;
@@ -688,6 +688,14 @@ void keyboard(unsigned char key, int x, int y){
 				glutIdleFunc(idle);
 			}
 			break;
+		case 'e': /* Change Particle Energy */
+		case 'E':
+			if(AMODE==0 && DFLAG){
+				if(PMODE==0) PMODE = 1;
+				else if(PMODE==1) PMODE = 0;
+				glutIdleFunc(idle);
+			}
+			break;
 		default:
 			break;
 	}
@@ -778,7 +786,6 @@ void SettingTUNA(void){
 	double ex,ey,ez;
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	speed = 1000;
 	dstnc = 300.0;
 	theta = 230*PI/180;
 	phi   =  30*PI/180;
@@ -797,7 +804,6 @@ void SettingLiGlass(void){
 	double ex,ey,ez;
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	speed =   100;
 	dstnc =  50.0;
 	theta = 320*PI/180;
 	phi   =  30*PI/180;

@@ -58,27 +58,6 @@ const double gamma_pmt = falltime*3/8.0;
 const double normal_pmt = sqrt(2*PI)*sigma1_pmt+(sqrt(2*PI)*sigma2_pmt+PI*gamma_pmt)/2.0;
 
 
-/* random function (poison distribution) */
-int poisson(double lambda){
-	if( lambda<30 ){
-		double x;
-		int k = 0;
-		x = randf();
-		while( x>=exp(-lambda) ) {
-			x = x*randf();
-			k = k+1;
-		}
-		return k;
-	}
-	else{
-		double sigma = sqrt(lambda);
-		double z = sqrt(-2.0*log(randf()))*sin(2.0*PI*randf());
-		int k = lambda+sigma*z;
-		return k;
-	}
-}
-
-
 /* random function of transit time (Box–Muller's method) */
 double randtransit(void){
 	double transittime = 5.8;

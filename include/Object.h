@@ -899,7 +899,8 @@ void glMAGRO(void){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_MAGRO.ambient);
 	/* define vertex */
 	const int N   =   300; /* N-sided polygon */
-	double R      = 148.0;
+	double R      = 150.0;
+	double R0     = R;
 	double theta  = 61.2*PI/360.0;
 	double dtheta = 2*theta/(double)N;
 	double L      = R*sin(theta);
@@ -909,7 +910,7 @@ void glMAGRO(void){
 	for(int i=0;i<4;++i){
 		theta = 61.2*PI/360.0;
 		if(i>=2){
-			R = 150.0+d;
+			R = R0+d;
 			L = R*sin(theta);
 		}
 		for(int j=0;j<N;++j){

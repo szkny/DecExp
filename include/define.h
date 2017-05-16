@@ -39,8 +39,8 @@
 #endif
 
 //光速 [cm/ns]
-#ifndef c
-#define c 29.9792458
+#ifndef lightspeed
+#define lightspeed 29.9792458
 #endif
 
 //反射材の反射率

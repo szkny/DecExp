@@ -19,9 +19,11 @@ void glGraph(void){
 	if(AMODE==0){
 		int TUNAtotal  = 0;
 		int MAGROtotal = 0;
-		for(int ch=0;ch<ARRAY1;++ch){
-			TUNAtotal  += hist_TUNA[ch];
-			MAGROtotal += hist_MAGRO[ch];
+		for(int ch1=0;ch1<ARRAY1;++ch1){
+			for(int ch2=0;ch2<EnARRAY;++ch2){
+				TUNAtotal  += TH2D_TUNA_n[ch1*EnARRAY+ch2];
+				MAGROtotal += TH2D_MAGRO_n[ch1*EnARRAY+ch2];
+			}
 		}
 		/* draw efficiency */
 		if(SFLAG){
@@ -43,139 +45,56 @@ void glGraph(void){
 		}
 
 		if(DFLAG==false){
-			/* Draw Histgram */
-			Graph *hst = new Graph("TOF Spector [counts/0.5nsec]",0.0,250.0);
-			hst->EntryHist(hist_TUNA,ARRAY1);
-			if(SFLAG){
-				hst->EntryHist(hist_MAGRO,ARRAY1);
-				hst->DrawHist1D(hist_MAGRO,bin1,ARRAY1,0.80,0.00,0.00);
+			int TOFtuna[ARRAY1] = {0};
+			int TOFmagro[ARRAY1] = {0};
+			for(int ch1=0;ch1<ARRAY1;++ch1){
+				for(int ch2=0;ch2<EnARRAY;++ch2){
+					TOFtuna[ch1] += TH2D_TUNA_n[ch1*EnARRAY+ch2];
+					TOFmagro[ch1] += TH2D_MAGRO_n[ch1*EnARRAY+ch2];
+				}
 			}
-			hst->DrawHist1D(hist_TUNA,bin1,ARRAY1,0.00,0.65,0.80);
-			hst->Canvas1D();
+			/* Draw Histgram */
+			Graph1D *hst = new Graph1D(0.0,250.0);
+			hst->EntryHist1D(TOFtuna,ARRAY1);
+			if(SFLAG){
+				hst->EntryHist1D(TOFmagro,ARRAY1);
+				hst->DrawLineHist1D(TOFmagro,bin1,ARRAY1);
+			}
+			hst->DrawHist1D(TOFtuna,bin1,ARRAY1);
+			hst->Canvas1D("TOF Spector [counts/0.5nsec]");
 			delete hst;
 		}
 
 		/* TOF vs. Ene 2D Histgram */
 		if(DFLAG){
-			/* draw range */
-			double XMIN  = 0.0;
-			double XMAX  = 250.0*1.01;
-			double XGRID = (XMAX-XMIN)/5/1.01;
-			int Nx = (XMAX-XMIN)/XGRID;
+			//Graph3D *hst = new Graph3D(0.0,250.0,0.0,maxEn);
+			//hst->EntryHist3D(TH2D_TUNA_n,ARRAY1,EnARRAY);
+			//hst->DrawHist3D(TH2D_TUNA_n,bin1,ARRAY1,dEn,EnARRAY);
 
-			double YMIN  = 0.0;
-			double YMAX  = maxEn*1.01;
-			double YGRID = (YMAX-YMIN)/5/1.01;
-			int Ny = (YMAX-YMIN)/YGRID;
-
-			/* window size */
-			double WX    = (XMAX-XMIN)*(100+MARGIN*2)/100;
-			double WY    = (YMAX-YMIN)*(100+MARGIN*2)/100;
-
-			/* offset */
-			double Xoff  = WX*(MARGIN+2)/100;
-			double Yoff  = WY*MARGIN/100;
-
-			/* grid line */
-			glEnable(GL_LINE_STIPPLE);
-			glLineStipple(1.0, 0x5555);
-			glColor3d(0.5,0.5,0.5);
-			glBegin(GL_LINES);
-			for(int i=1; i<=Nx; ++i){
-				glVertex2d((XGRID*i+Xoff)/WX,(YMIN+Yoff)/WY);
-				glVertex2d((XGRID*i+Xoff)/WX,(YMAX+Yoff)/WY);
+			Graph2D *hst = new Graph2D(0.0,250.0,0.0,maxEn);
+			if(SFLAG) hst->EntryHist2D(2);
+			else hst->EntryHist2D(1);
+			if(PMODE==0){
+				if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_n,bin1,ARRAY1,dEn,EnARRAY);
+				hst->DrawHist2D(TH2D_TUNA_n,bin1,ARRAY1,dEn,EnARRAY);
+				hst->Canvas2D("TOF vs. Neutron Energy");
 			}
-			for(int i=1; i<=Ny; ++i){
-				glVertex2d((XMIN+Xoff)/WX,(YGRID*i+Yoff)/WY);
-				glVertex2d((XMAX+Xoff)/WX,(YGRID*i+Yoff)/WY);
+			else if(PMODE==1){
+				if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_p,bin1,ARRAY1,dEn,EnARRAY);
+				hst->DrawHist2D(TH2D_TUNA_p,bin1,ARRAY1,dEn,EnARRAY);
+				hst->Canvas2D("TOF vs.  Proton Energy");
 			}
-			glEnd();
-			glDisable(GL_LINE_STIPPLE);
-
-			/* text */
-			double XtxtA1 = -(XMAX-XMIN)*0.01;
-			double XtxtA2 = -(XMAX-XMIN)*0.02;
-			double XtxtA3 = -(XMAX-XMIN)*0.03;
-			double YtxtA  = -(YMAX-YMIN)*0.04;
-			double XtxtB  = -(XMAX-XMIN)*0.08;
-			double YtxtB  = -(YMAX-YMIN)*0.01;
-			glColor3d(0.0,0.0,0.0);
-			if(PMODE==0) glDrawString("TOF vs. Neutron Energy",0.30,0.95);
-			if(PMODE==1) glDrawString("TOF vs.  Proton Energy",0.30,0.95);
-			glDrawString("0",(XtxtA3+Xoff)/WX,(YtxtA+Yoff)/WY);	
-			char s[10];
-			for(int i=1; i<=Nx; ++i){
-				sprintf(s,"%d",i*(int)XGRID);
-				int size = strlen(s);
-				if(size == 1) glDrawString(s,(i*XGRID+XtxtA1+Xoff)/WX,(YtxtA+Yoff)/WY);
-				if(size == 2) glDrawString(s,(i*XGRID+XtxtA2+Xoff)/WX,(YtxtA+Yoff)/WY);
-				if(size == 3) glDrawString(s,(i*XGRID+XtxtA3+Xoff)/WX,(YtxtA+Yoff)/WY);
-			}
-			for(int i=1; i<=Ny; ++i){
-				sprintf(s,"%3.1f",(double)i*YGRID);
-				glDrawString(s,(XtxtB+Xoff)/WX,(i*YGRID+YtxtB+Yoff)/WY);
-			}
-			glDrawString("nsec",(XMAX/2+Xoff)/WX,(YtxtA*2+Yoff)/WY);
-
-			/* draw 2D Histgram (MAGRO) */
-			if(SFLAG){
-				glColor3d(0.9,0.0,0.0);
-				glBegin(GL_QUADS);
-				for(int ch1=0;ch1<ARRAY1;++ch1){
-					if(XMIN<=ch1*bin1&&(ch1+1)*bin1<=XMAX){
-						for(int ch2=0;ch2<EnARRAY;++ch2){
-							if(YMIN<=ch2*dEn&&(ch2+1)*dEn<=YMAX){
-								if(0<TH2D_MAGRO[PMODE][ch1][ch2]){
-									glVertex2d((ch1*bin1+Xoff)/WX,(ch2*dEn+Yoff)/WY);
-									glVertex2d(((ch1+1)*bin1+Xoff)/WX,(ch2*dEn+Yoff)/WY);
-									glVertex2d(((ch1+1)*bin1+Xoff)/WX,((ch2+1)*dEn+Yoff)/WY);
-									glVertex2d((ch1*bin1+Xoff)/WX,((ch2+1)*dEn+Yoff)/WY);
-								}
-							}
-						}
-					}
-				}
-				glEnd();
-			}
-
-			/* draw 2D Histgram (TUNA) */
-			glColor3d(0.0,0.65,0.8);
-			glBegin(GL_QUADS);
-			for(int ch1=0;ch1<ARRAY1;++ch1){
-				if(XMIN<=ch1*bin1&&(ch1+1)*bin1<=XMAX){
-					for(int ch2=0;ch2<EnARRAY;++ch2){
-						if(YMIN<=ch2*dEn&&(ch2+1)*dEn<=YMAX){
-							if(0<TH2D_TUNA[PMODE][ch1][ch2]){
-								glVertex2d((ch1*bin1+Xoff)/WX,(ch2*dEn+Yoff)/WY);
-								glVertex2d(((ch1+1)*bin1+Xoff)/WX,(ch2*dEn+Yoff)/WY);
-								glVertex2d(((ch1+1)*bin1+Xoff)/WX,((ch2+1)*dEn+Yoff)/WY);
-								glVertex2d((ch1*bin1+Xoff)/WX,((ch2+1)*dEn+Yoff)/WY);
-							}
-						}
-					}
-				}
-			}
-			glEnd();
-
-			/* coordinate line */
-			glColor3d(0.0,0.0,0.0);
-			glBegin(GL_LINE_LOOP);
-			glVertex2d((XMIN+Xoff)/WX,(YMIN+Yoff)/WY);
-			glVertex2d((XMAX+Xoff)/WX,(YMIN+Yoff)/WY);
-			glVertex2d((XMAX+Xoff)/WX,(YMAX+Yoff)/WY);
-			glVertex2d((XMIN+Xoff)/WX,(YMAX+Yoff)/WY);
-			glEnd();
-
+			delete hst;
 		}
 	}
 
 
 	/* LiGlass TOF Spector */
 	if(AMODE==1){
-		Graph *hst = new Graph("Li TOF Spector [counts/0.1nsec]",0.0,30.0);
-		hst->EntryHist(hist_Li,ARRAY2);
-		hst->DrawHist1D(hist_Li,bin2,ARRAY2,0.00,0.65,0.80);
-		hst->Canvas1D();
+		Graph1D *hst = new Graph1D(0.0,30.0);
+		hst->EntryHist1D(hist_Li,ARRAY2);
+		hst->DrawHist1D(hist_Li,bin2,ARRAY2);
+		hst->Canvas1D("Li TOF Spector [counts/0.1nsec]");
 		delete hst;
 	}
 

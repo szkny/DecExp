@@ -182,10 +182,10 @@ void display1(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 
 	/* Light Color */
-	GLfloat LightClr0[]  = { 0.2, 0.2, 0.2, 1.0 };
-	GLfloat LightClr1[]  = { 0.7, 0.7, 0.7, 1.0 };
-	GLfloat LightClr2[]  = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat LightPos0[]  = {   0.0, 500.0,-150.0, 1.0 };
+	static GLfloat LightClr0[]  = { 0.2, 0.2, 0.2, 1.0 };
+	static GLfloat LightClr1[]  = { 0.7, 0.7, 0.7, 1.0 };
+	static GLfloat LightClr2[]  = { 1.0, 1.0, 1.0, 1.0 };
+	static GLfloat LightPos0[]  = {   0.0, 500.0,-150.0, 1.0 };
 	static GLfloat LightPos1[]  = { 500.0, 500.0, 350.0, 1.0 };
 	static GLfloat LightPos2[]  = { 500.0, 500.0,-650.0, 1.0 };
 	static GLfloat LightPos3[]  = {-500.0, 500.0, 350.0, 1.0 };
@@ -593,7 +593,7 @@ void keyboard(unsigned char key, int x, int y){
 				default:
 					break;
 			}
-			glutPostRedisplay();
+			glutIdleFunc(idle);
 			break;
 		case 'p': /* Polygon Mode */
 		case 'P':

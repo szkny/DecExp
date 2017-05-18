@@ -32,9 +32,9 @@ int  PMODE  = 0; /* Particle Mode for 2D (0:Neutron 1:Proton) */
 
 /* a number of neutron,photon */
 const int NeutN = 100000;
-const int PhotN =   1000;
+const int PhotN = 1000;
 
-/* animation maximum time */
+/* animation maximum time (nsec) */
 const double t_max = 300;
 
 /* time constance of neutron occurence */
@@ -79,18 +79,18 @@ bool InFlag[NeutN] = {false};
 /* histogram for TOF Spector */
 const double bin1     = 0.5;
 const int ARRAY1      = t_max/bin1;
-int hist_TUNA[ARRAY1] = {0};
-int hist_MAGRO[ARRAY1]= {0};
 const double bin2     = 0.1;
 const int ARRAY2      = t_max/bin2;
 int hist_Li[ARRAY2]   = {0};
 
-/* histgram for Neutron Energy Spector ([Neutron or Proton][TOF][Ene]) */
+/* histgram for Neutron Energy Spector ([TOF][Ene]) */
 const double dEn   = 0.005; /*MeV*/
 const double maxEn = 2.50;
 const int EnARRAY  = maxEn/dEn;
-int TH2D_TUNA[2][ARRAY1][EnARRAY] = {};
-int TH2D_MAGRO[2][ARRAY1][EnARRAY]= {};
+int TH2D_TUNA_n[ARRAY1*EnARRAY] = {};
+int TH2D_MAGRO_n[ARRAY1*EnARRAY]= {};
+int TH2D_TUNA_p[ARRAY1*EnARRAY] = {};
+int TH2D_MAGRO_p[ARRAY1*EnARRAY]= {};
 
 
 /* neutron initialize */
@@ -111,7 +111,7 @@ void glNeutInit(void){
 		InFlag[i]= false;
 		Tcount[i]= 0;
 		range[i] = HitPosition(En[i]);
-		vn[i]    = c*sqrt(1.0-pow(Mnc2/(En[i]+Mnc2),2.0));
+		vn[i]    = lightspeed*sqrt(1.0-pow(Mnc2/(En[i]+Mnc2),2.0));
 		Ntheta   = 2.0*acos(sqrt(1.0-randf()));
 		Nphi     = randf()*2.0*PI;
 		vn_x[i]  = vn[i]*cos(Ntheta);
@@ -125,7 +125,7 @@ void glNeutInit(void){
 
 
 /* initialize each neutron */
-void glNeutInit2(int i, double time){
+void glEachNeutInit(int i, double time){
 	++nCounter;
 	/* initialize start time */
 	tn0[i] = time-Ntau*log(1.0-randf());
@@ -138,7 +138,7 @@ void glNeutInit2(int i, double time){
 	InFlag[i]= false;
 	Tcount[i]= 0;
 	range[i] = HitPosition(En[i]);
-	vn[i]    = c*sqrt(1.0-pow(Mnc2/(En[i]+Mnc2),2.0));
+	vn[i]    = lightspeed*sqrt(1.0-pow(Mnc2/(En[i]+Mnc2),2.0));
 	Ntheta   = 2.0*acos(sqrt(1.0-randf()));
 	Nphi     = randf()*2.0*PI;
 	vn_x[i]  = vn[i]*cos(Ntheta);
@@ -163,7 +163,7 @@ void glNeutMonte(void){
 	glBegin(GL_POINTS);
 	for(int i=0;i<NeutN;++i){
 
-		if(t-tn0[i]>Tinit) glNeutInit2(i,t);
+		if(t-tn0[i]>Tinit) glEachNeutInit(i,t);
 
 		if(tn0[i]<t){
 
@@ -186,11 +186,10 @@ void glNeutMonte(void){
 									Pn_y[i] += vn_y[i]*Tover;
 									Pn_z[i] += vn_z[i]*Tover;
 									int ch1 = (t+Tover-tn0[i])/bin1;
-									if(0<=ch1&&ch1<ARRAY1)  ++hist_TUNA[ch1];
 									int ch2 = En[i]/dEn;     /* Neutron */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA[0][ch1][ch2];
+									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_n[ch1*EnARRAY+ch2];
 									ch2 = En[i]*randf()/dEn; /* Proton */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA[1][ch1][ch2];
+									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_p[ch1*EnARRAY+ch2];
 									++Tcount[i];
 								}
 
@@ -228,11 +227,10 @@ void glNeutMonte(void){
 									Pn_y[i] += vn_y[i]*Tover;
 									Pn_z[i] += vn_z[i]*Tover;
 									int ch1 = (t+Tover-tn0[i])/bin1;
-									if(0<=ch1&&ch1<=ARRAY1) ++hist_MAGRO[ch1];
 									int ch2 = En[i]/dEn;     /* Neutron */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO[0][ch1][ch2];
+									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_n[ch1*EnARRAY+ch2];
 									ch2 = En[i]*randf()/dEn; /* Proton */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO[1][ch1][ch2];
+									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_p[ch1*EnARRAY+ch2];
 									++Tcount[i];
 								}
 							}
@@ -333,24 +331,18 @@ void glHistInit(void){
 	if(AMODE==0){
 		TUNAincident  = 0;
 		MAGROincident = 0;
-		for(int ch1=0;ch1<ARRAY1;++ch1){
-			hist_TUNA[ch1] = 0;
-			hist_MAGRO[ch1]= 0;
-			for(int ch2=0;ch2<EnARRAY;++ch2){
-				for(int i=0;i<2;++i){
-					TH2D_TUNA[i][ch1][ch2] = 0;
-					TH2D_MAGRO[i][ch1][ch2] = 0;
-				}
-			}
-		}
+		memset(TH2D_TUNA_n,0,sizeof(TH2D_TUNA_n));
+		memset(TH2D_MAGRO_n,0,sizeof(TH2D_MAGRO_n));
+		memset(TH2D_TUNA_p,0,sizeof(TH2D_TUNA_p));
+		memset(TH2D_MAGRO_p,0,sizeof(TH2D_MAGRO_p));
 	}
-	if(AMODE==1) for(int ch=0;ch<ARRAY2;++ch) hist_Li[ch] = 0;
+	if(AMODE==1){
+		memset(hist_Li,0,sizeof(hist_Li));
+	}
 	if(AMODE==2){
-		for(int ch=0;ch<ARRAY3;++ch){
-			LoopCounter   = 1;
-			hist_rPMT[ch] = 0;
-			hist_lPMT[ch] = 0;
-		}
+		LoopCounter   = 1;
+		memset(hist_rPMT,0,sizeof(hist_rPMT));
+		memset(hist_lPMT,0,sizeof(hist_lPMT));
 		PMThistgramInit();
 	}
 }
@@ -377,9 +369,9 @@ void glPhotInit(void){
 		t0[i]  = -tau*(log(1.0-randf())); 
 		theta  = 2.0*acos(sqrt(1.0-randf()));
 		phi    = randf()*2.0*PI;
-		vx[i]  = c*cos(theta);
-		vy[i]  = c*sin(theta)*cos(phi);
-		vz[i]  = c*sin(theta)*sin(phi);
+		vx[i]  = lightspeed*cos(theta);
+		vy[i]  = lightspeed*sin(theta)*cos(phi);
+		vz[i]  = lightspeed*sin(theta)*sin(phi);
 		Px[i]  = px;
 		Py[i]  = py;
 		Pz[i]  = 2*z_max*(randf()-0.5);

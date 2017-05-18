@@ -66,7 +66,7 @@ double pnCrossSection(double E){
 	double Mp   = Mpc2*1.0e6;
 	double myu  = (Mn*Mp)/(Mn+Mp);
 	/* Wave Number [1/m] */
-	double k    = sqrt(E*1.0e6*myu)/(hbar*c*1.0e7);
+	double k    = sqrt(E*1.0e6*myu)/(hbar*lightspeed*1.0e7);
 	double A1   = 3.0*PI/(k*k+pow(1.0/R0-(ret*(k*k+1.0/(R0*R0))),2));
 	double A2   = PI/(k*k+pow(1.0/as-res*k*k,2));
 	return (A1+A2)*1.0e28;

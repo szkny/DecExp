@@ -1,8 +1,6 @@
 # GNUmakefile
 #		(c) S.Suzuki 2017.1.16 ————— patch 2017.5.28
 
-#NAME    := DecExp
-
 SUFFIX   = .cpp
 
 SRCDIR   = ./src

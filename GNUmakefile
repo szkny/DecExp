@@ -18,6 +18,7 @@ TARGETS  = $(notdir $(basename $(SOURCES)))
 define MAKEALL
 $(1): $(1).o
 	$(COMPILER) $(INCLUDE) $(CFLAGS) $(FRAME) -o $(EXEDIR)/$(1) $(1).o
+	$(RM) $(1).o
 $(1).o:
 	$(COMPILER) $(INCLUDE) $(CFLAGS) $(FRAME) -c $(SRCDIR)/$(1)$(SUFFIX)
 endef

@@ -4,6 +4,14 @@
 #include"DecExp.h"
 #include"Graph.h"
 
+bool HFLAG  = false; /* Stock Histogram */
+bool OFLAG  = false; /* Oscillo Mode */
+bool LFLAG  = true;  /* Log Scale for PMT Histogram */
+bool DFLAG  = false; /* TOF vs. En 2D Histogram */
+bool PosFLAG= false; /* Position Histogram */
+int  OMODE  = 0; /* Oscillo Mode (0:reach 1:signal 2:hist) */
+int  PMODE  = 0; /* Particle Mode for 2D (0:Neutron 1:Proton) */
+
 
 /* Draw Histgram */
 void glGraph(void){
@@ -44,47 +52,70 @@ void glGraph(void){
 			glDrawString(txt,0.50,0.85);
 		}
 
-		if(DFLAG==false){
-			int TOFtuna[ARRAY1] = {0};
-			int TOFmagro[ARRAY1] = {0};
-			for(int ch1=0;ch1<ARRAY1;++ch1){
-				for(int ch2=0;ch2<EnARRAY;++ch2){
-					TOFtuna[ch1] += TH2D_TUNA_n[ch1*EnARRAY+ch2];
-					TOFmagro[ch1] += TH2D_MAGRO_n[ch1*EnARRAY+ch2];
+		if(!DFLAG){
+			if(!PosFLAG){
+				int TOFtuna[ARRAY1] = {0};
+				int TOFmagro[ARRAY1] = {0};
+				for(int ch1=0;ch1<ARRAY1;++ch1){
+					for(int ch2=0;ch2<EnARRAY;++ch2){
+						TOFtuna[ch1] += TH2D_TUNA_n[ch1*EnARRAY+ch2];
+						TOFmagro[ch1] += TH2D_MAGRO_n[ch1*EnARRAY+ch2];
+					}
 				}
+				/* Draw Histgram */
+				Graph1D *hst = new Graph1D(0.0,250.0);
+				hst->EntryHist1D(TOFtuna,ARRAY1);
+				if(SFLAG){
+					hst->EntryHist1D(TOFmagro,ARRAY1);
+					hst->DrawLineHist1D(TOFmagro,bin1,ARRAY1);
+				}
+				hst->DrawHist1D(TOFtuna,bin1,ARRAY1);
+				hst->Canvas1D("TOF Spector [counts/0.5nsec]","nsec");
+				delete hst;
 			}
-			/* Draw Histgram */
-			Graph1D *hst = new Graph1D(0.0,250.0);
-			hst->EntryHist1D(TOFtuna,ARRAY1);
-			if(SFLAG){
-				hst->EntryHist1D(TOFmagro,ARRAY1);
-				hst->DrawLineHist1D(TOFmagro,bin1,ARRAY1);
+			else{
+				int TUNA_HitPosX[XARRAY] = {0};
+				for(int chx=0;chx<XARRAY;++chx){
+					for(int chy=0;chy<YARRAY;++chy){
+						TUNA_HitPosX[chx] += TH2D_TUNA_HitPos[chx*YARRAY+chy];
+					}
+				}
+				/* Draw Histgram */
+				Graph1D *hst = new Graph1D(0.0,150.0);
+				hst->EntryHist1D(TUNA_HitPosX,XARRAY);
+				hst->DrawHist1D(TUNA_HitPosX,dPos,XARRAY);
+				char title[64];
+				sprintf(title,"Hit Position x [counts/%3.1fcm]",dPos);
+				hst->Canvas1D(title,"cm");
+				delete hst;
 			}
-			hst->DrawHist1D(TOFtuna,bin1,ARRAY1);
-			hst->Canvas1D("TOF Spector [counts/0.5nsec]");
-			delete hst;
 		}
 
 		/* TOF vs. Ene 2D Histgram */
-		if(DFLAG){
-			//Graph3D *hst = new Graph3D(0.0,250.0,0.0,maxEn);
-			//hst->EntryHist3D(TH2D_TUNA_n,ARRAY1,EnARRAY);
-			//hst->DrawHist3D(TH2D_TUNA_n,bin1,ARRAY1,dEn,EnARRAY);
-
-			Graph2D *hst = new Graph2D(0.0,250.0,0.0,maxEn);
-			if(SFLAG) hst->EntryHist2D(2);
-			else hst->EntryHist2D(1);
-			if(PMODE==0){
-				if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_n,bin1,ARRAY1,dEn,EnARRAY);
-				hst->DrawHist2D(TH2D_TUNA_n,bin1,ARRAY1,dEn,EnARRAY);
-				hst->Canvas2D("TOF vs. Neutron Energy");
+		else{ // DFLAG == true
+			if(!PosFLAG){
+				Graph2D *hst = new Graph2D(0.0,250.0,0.0,maxEn);
+				if(SFLAG) hst->EntryHist2D(2);
+				else hst->EntryHist2D(1);
+				if(PMODE==0){
+					if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_n,bin1,ARRAY1,dEn,EnARRAY);
+					hst->DrawHist2D(TH2D_TUNA_n,bin1,ARRAY1,dEn,EnARRAY);
+					hst->Canvas2D("TOF vs. Neutron Energy","nsec");
+				}
+				else if(PMODE==1){
+					if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_p,bin1,ARRAY1,dEn,EnARRAY);
+					hst->DrawHist2D(TH2D_TUNA_p,bin1,ARRAY1,dEn,EnARRAY);
+					hst->Canvas2D("TOF vs.  Proton Energy","nsec");
+				}
+				delete hst;
 			}
-			else if(PMODE==1){
-				if(SFLAG) hst->DrawHist2D(TH2D_MAGRO_p,bin1,ARRAY1,dEn,EnARRAY);
-				hst->DrawHist2D(TH2D_TUNA_p,bin1,ARRAY1,dEn,EnARRAY);
-				hst->Canvas2D("TOF vs.  Proton Energy");
+			else{
+				Graph2D *hst = new Graph2D(0.0,250.0,0.0,150);
+				hst->EntryHist2D(1);
+				hst->DrawHist2D(TH2D_TUNA_TOF_Pos,bin1,ARRAY1,dPos,XARRAY);
+				hst->Canvas2D("TOF vs. Hit Position","nsec");
+				delete hst;
 			}
-			delete hst;
 		}
 	}
 
@@ -94,7 +125,7 @@ void glGraph(void){
 		Graph1D *hst = new Graph1D(0.0,30.0);
 		hst->EntryHist1D(hist_Li,ARRAY2);
 		hst->DrawHist1D(hist_Li,bin2,ARRAY2);
-		hst->Canvas1D("Li TOF Spector [counts/0.1nsec]");
+		hst->Canvas1D("Li TOF Spector [counts/0.1nsec]","nsec");
 		delete hst;
 	}
 

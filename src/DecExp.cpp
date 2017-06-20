@@ -666,6 +666,11 @@ void keyboard(unsigned char key, int x, int y){
 			break;
 		case 'o': /* Oscillo Mode */
 		case 'O':
+			if(AMODE==0){
+				if(PosFLAG) PosFLAG = false;
+				else PosFLAG = true;
+				glutIdleFunc(idle);
+			}
 			if(AMODE==2){
 				if(OMODE<2) ++OMODE;
 				else OMODE = 0;

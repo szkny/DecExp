@@ -22,13 +22,6 @@ bool AFLAG  = false; /* Animation On_Off */
 bool MFLAG  = false; /* Mouse Mode */
 bool RTFLAG = true;  /* Rotattion_Translation Mode */
 bool SFLAG  = true;  /* Status On_Off */
-bool HFLAG  = false; /* Stock Histgram */
-bool OFLAG  = false; /* Oscillo Mode */
-bool LFLAG  = true;  /* Log Scale for PMT Histgram */
-bool DFLAG  = false; /* TOF vs. En 2D Histgram */
-int  OMODE  = 0; /* Oscillo Mode (0:reach 1:signal 2:hist) */
-int  PMODE  = 0; /* Particle Mode for 2D (0:Neutron 1:Proton) */
-
 
 /* a number of neutron,photon */
 const int NeutN = 100000;
@@ -77,11 +70,18 @@ int MAGROincident  = 0;
 bool InFlag[NeutN] = {false};
 
 /* histogram for TOF Spector */
-const double bin1     = 0.5;
-const int ARRAY1      = t_max/bin1;
-const double bin2     = 0.1;
-const int ARRAY2      = t_max/bin2;
-int hist_Li[ARRAY2]   = {0};
+const double bin1 = 0.5;
+const int ARRAY1  = t_max/bin1;
+const double bin2 = 0.1;
+const int ARRAY2  = t_max/bin2;
+int hist_Li[ARRAY2] = {0};
+
+/* histogram for Neutron Hit Point (0~150ch : 75ch = center) */
+const double dPos = 1.0;
+const int XARRAY  = (x_pmt+5)*2/dPos;
+const int YARRAY  = (y_max+5)*2/dPos;
+int TH2D_TUNA_HitPos[XARRAY*YARRAY] = {};
+int TH2D_TUNA_TOF_Pos[ARRAY1*XARRAY] = {};
 
 /* histgram for Neutron Energy Spector ([TOF][Ene]) */
 const double dEn   = 0.005; /*MeV*/
@@ -150,6 +150,21 @@ void glEachNeutInit(int i, double time){
 }
 
 
+#define FillTUNA() {\
+		int ch1 = (t-tn0[i])/bin1;\
+		if(0<=ch1&&ch1<ARRAY1){\
+			int ch2 = En[i]/dEn;     /* Neutron */\
+			if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_n[ch1*EnARRAY+ch2];\
+			ch2 = En[i]*randf()/dEn; /* Proton */\
+			if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_p[ch1*EnARRAY+ch2];\
+			int chx = (Pn_x[i]+x_pmt+5)/dPos;\
+			int chy = (Pn_y[i]+y_max+5)/dPos;\
+			if(0<=chx&&chx<=XARRAY && 0<=chy&&chy<=YARRAY){\
+				++TH2D_TUNA_HitPos[chx*YARRAY+chy];\
+				++TH2D_TUNA_TOF_Pos[ch1*XARRAY+chx];\
+			}\
+		}\
+}
 /* neutron montecarlo animation and fill histogram */
 void glNeutMonte(void){
 	/* initialize start time */
@@ -169,31 +184,74 @@ void glNeutMonte(void){
 
 			glVertex3d(Pn_x[i],Pn_y[i],Pn_z[i]);
 
-			if(AFLAG){
+			if(AFLAG && Tcount[i]==0){
+
+				/* neutron move */
+				if(AMODE==0){
+					Pn_x[i] += vn_x[i]*bin1;
+					Pn_y[i] += vn_y[i]*bin1;
+					Pn_z[i] += vn_z[i]*bin1;
+				}
+				if(AMODE==1){
+					Pn_x[i] += vn_x[i]*bin2;
+					Pn_y[i] += vn_y[i]*bin2;
+					Pn_z[i] += vn_z[i]*bin2;
+				}
 
 				/* into TUNA */	
 				if(-x_max<=Pn_x[i]&&Pn_x[i]<=x_max){
 					if(-y_max<=Pn_y[i]&&Pn_y[i]<=y_max){
 						if(-z_max<=Pn_z[i]&&Pn_z[i]<=z_max){
-							if(Tcount[i]==0){
-								if(InFlag[i]!=true){
-									++TUNAincident;
-									InFlag[i]=true;
-								}
-								if(range[i]<vn[i]*z_max*2/vn_z[i]){
-									double Tover = range[i]/vn[i]-(Pn_z[i]+z_max)/vn_z[i];
-									Pn_x[i] += vn_x[i]*Tover;
-									Pn_y[i] += vn_y[i]*Tover;
-									Pn_z[i] += vn_z[i]*Tover;
-									int ch1 = (t+Tover-tn0[i])/bin1;
-									int ch2 = En[i]/dEn;     /* Neutron */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_n[ch1*EnARRAY+ch2];
-									ch2 = En[i]*randf()/dEn; /* Proton */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_TUNA_p[ch1*EnARRAY+ch2];
-									++Tcount[i];
-								}
-
+							if(InFlag[i]!=true){
+								++TUNAincident;
+								InFlag[i]=true;
 							}
+							if(range[i]<vn[i]*z_max*2/vn_z[i]){
+							//	double Tover = range[i]/vn[i]-(Pn_z[i]+z_max)/vn_z[i];
+							//	Pn_x[i] += vn_x[i]*Tover;
+							//	Pn_y[i] += vn_y[i]*Tover;
+							//	Pn_z[i] += vn_z[i]*Tover;
+							//	int ch1 = (t+Tover-tn0[i])/bin1;
+								FillTUNA();
+								++Tcount[i];
+							}
+
+						}
+					}
+				}
+				if(Tcount[i]==0){
+					if(-x_lgd<=Pn_x[i] && Pn_x[i]<=-x_max){
+						double guide_y = (x_lgd+Pn_x[i])*tan(psi)+y_lgd;
+						double guide_z = (x_lgd+Pn_x[i])*tan(xi)+z_lgd;
+						if(-guide_y<=Pn_y[i]&&Pn_y[i]<=guide_y\
+							&& -guide_z<=Pn_z[i]&&Pn_z[i]<=guide_z){
+
+							if(InFlag[i]!=true){
+								++TUNAincident;
+								InFlag[i]=true;
+							}
+							if(range[i]<vn[i]*z_max*2/vn_z[i]){
+								FillTUNA();
+								++Tcount[i];
+							}
+
+						}
+					}
+					if( x_max<=Pn_x[i] && Pn_x[i]<= x_lgd){
+						double guide_y = (x_lgd-Pn_x[i])*tan(psi)+y_lgd;
+						double guide_z = (x_lgd-Pn_x[i])*tan(xi)+z_lgd;
+						if(-guide_y<=Pn_y[i]&&Pn_y[i]<=guide_y\
+							&& -guide_z<=Pn_z[i]&&Pn_z[i]<=guide_z){
+
+							if(InFlag[i]!=true){
+								++TUNAincident;
+								InFlag[i]=true;
+							}
+							if(range[i]<vn[i]*z_max*2/vn_z[i]){
+								FillTUNA();
+								++Tcount[i];
+							}
+
 						}
 					}
 				}
@@ -216,23 +274,22 @@ void glNeutMonte(void){
 					if(y-dy<y0&&y0<y+dy){
 						if(z_17N<Pn_z[i]){
 
-							if(Tcount[i]==0){
-								if(InFlag[i]!=true){
-									++MAGROincident;
-									InFlag[i]=true;
-								}
-								if(range[i]<dMAGRO){
-									double Tover = (range[i])/vn[i];
-									Pn_x[i] += vn_x[i]*Tover;
-									Pn_y[i] += vn_y[i]*Tover;
-									Pn_z[i] += vn_z[i]*Tover;
-									int ch1 = (t+Tover-tn0[i])/bin1;
-									int ch2 = En[i]/dEn;     /* Neutron */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_n[ch1*EnARRAY+ch2];
-									ch2 = En[i]*randf()/dEn; /* Proton */
-									if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_p[ch1*EnARRAY+ch2];
-									++Tcount[i];
-								}
+							if(InFlag[i]!=true){
+								++MAGROincident;
+								InFlag[i]=true;
+							}
+							if(range[i]<dMAGRO){
+							//	double Tover = (range[i])/vn[i];
+							//	Pn_x[i] += vn_x[i]*Tover;
+							//	Pn_y[i] += vn_y[i]*Tover;
+							//	Pn_z[i] += vn_z[i]*Tover;
+							//	int ch1 = (t+Tover-tn0[i])/bin1;
+								int ch1 = (t-tn0[i])/bin1;
+								int ch2 = En[i]/dEn;     /* Neutron */
+								if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_n[ch1*EnARRAY+ch2];
+								ch2 = En[i]*randf()/dEn; /* Proton */
+								if(0<=ch2&&ch2<EnARRAY) ++TH2D_MAGRO_p[ch1*EnARRAY+ch2];
+								++Tcount[i];
 							}
 						}
 					}
@@ -244,24 +301,9 @@ void glNeutMonte(void){
 					x = Pn_x[i] - x_Li;
 					z = Pn_z[i] - z_Li;
 					if(x*x+z*z<=R_Li*R_Li){
-						if(Tcount[i]==0){
-							int ch = (t-tn0[i])/bin2;
-							if(0<=ch&&ch<ARRAY2) ++hist_Li[ch];
-						}
+						int ch = (t-tn0[i])/bin2;
+						if(0<=ch&&ch<ARRAY2) ++hist_Li[ch];
 						++Tcount[i];
-					}
-				}
-				/* neutron move */
-				if(Tcount[i]==0){
-					if(AMODE==0){
-						Pn_x[i] += vn_x[i]*bin1;
-						Pn_y[i] += vn_y[i]*bin1;
-						Pn_z[i] += vn_z[i]*bin1;
-					}
-					if(AMODE==1){
-						Pn_x[i] += vn_x[i]*bin2;
-						Pn_y[i] += vn_y[i]*bin2;
-						Pn_z[i] += vn_z[i]*bin2;
 					}
 				}
 			}
@@ -275,6 +317,7 @@ void glNeutMonte(void){
 	}
 	glEnable(GL_LIGHTING);
 }
+#undef FillTUNA
 
 
 
@@ -331,10 +374,12 @@ void glHistInit(void){
 	if(AMODE==0){
 		TUNAincident  = 0;
 		MAGROincident = 0;
+		memset(TH2D_TUNA_HitPos,0,sizeof(TH2D_TUNA_HitPos));
 		memset(TH2D_TUNA_n,0,sizeof(TH2D_TUNA_n));
 		memset(TH2D_MAGRO_n,0,sizeof(TH2D_MAGRO_n));
 		memset(TH2D_TUNA_p,0,sizeof(TH2D_TUNA_p));
 		memset(TH2D_MAGRO_p,0,sizeof(TH2D_MAGRO_p));
+		memset(TH2D_TUNA_TOF_Pos,0,sizeof(TH2D_TUNA_TOF_Pos));
 	}
 	if(AMODE==1){
 		memset(hist_Li,0,sizeof(hist_Li));

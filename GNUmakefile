@@ -4,11 +4,11 @@
 SUFFIX   = .cpp
 
 SRCDIR   = ./src
-INCLUDE  = -I./include
+INCLUDE  = -I./include -I/System/Library/Frameworks/GLUT.framework/Headers
 EXEDIR   = ./bin
 
 COMPILER = g++
-CFLAGS   = -Wall -O2
+CFLAGS   = -w -O2
 FRAME    = -framework GLUT -framework OpenGL 
 
 SOURCES  = $(wildcard $(SRCDIR)/*$(SUFFIX))

@@ -2,7 +2,7 @@
 #define Graph_h_
 /**************************************************************/
 
-#include<GL/glut.h>
+#include<glut.h>
 #include"MyGLUT.h"
 
 
@@ -261,8 +261,8 @@ void Graph2D::EntryHist2D(int N){
 	double coef = c;\
 	if(coef<0)   coef = 0.0;\
 	if(360<coef) coef = 359.9;\
-	double hue = h/hmax*coef+off;\
-	while(360<=hue) hue -= 360.0;\
+	double hue = -h/hmax*coef+off;\
+	while(hue<0) hue += 360.0;\
 	double R = 1.0;\
 	double G = 1.0;\
 	double B = 1.0;\
@@ -325,7 +325,7 @@ void Graph2D::DrawHist2D(int *hist, double bin1, int ARRAY1, double bin2, int AR
 				if(ymin<=ch2*bin2&&(ch2+1)*bin2<=ymax){
 					double h = hist[ch1*ARRAY2+ch2];
 					if(0<h){
-						HUE(180,300);
+						HUE(220,220);
 						glVertex2d((ch1*bin1+xoff)/wx,(ch2*bin2+yoff)/wy);
 						glVertex2d(((ch1+1)*bin1+xoff)/wx,(ch2*bin2+yoff)/wy);
 						glVertex2d(((ch1+1)*bin1+xoff)/wx,((ch2+1)*bin2+yoff)/wy);
@@ -340,7 +340,7 @@ void Graph2D::DrawHist2D(int *hist, double bin1, int ARRAY1, double bin2, int AR
 	/* Color Bar */
 	double hbin = hmax/100.0;
 	for(double h=0.0;h<hmax;h+=hbin){
-		HUE(180,300);
+		HUE(220,220);
 		glBegin(GL_QUADS);
 		glVertex2d(0.93,(h*ymax/hmax+yoff)/wy);
 		glVertex2d(0.97,(h*ymax/hmax+yoff)/wy);

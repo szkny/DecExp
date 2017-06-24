@@ -6,7 +6,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#include<GL/glut.h>
+#include<glut.h>
 
 #include"MyGLUT.h"
 #include"Colors.h"
@@ -70,10 +70,7 @@ const double z_Li  =-150.00;
 /* floor of ENcourse */
 void glENfloor(void){
 	if(PFLAG){
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_floor.specular);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_floor.shininess);	
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_floor.diffuse);	
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_floor.ambient);	
+		glMaterialColor(ms_floor);
 		glRectangular(2000,2,2000,0,-Hbeam-1,0);
 	}
 }
@@ -81,10 +78,7 @@ void glENfloor(void){
 
 /* F2chamber */
 void glF2beamline(void){
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+	glMaterialColor(ms_metal);
 	double r1 = 5.0;
 	double r2 = 3.0;
 	double r3 = 5.5;
@@ -178,10 +172,7 @@ void glF2beamline(void){
 	glRectangular(250.0, L, L,325.950, 0.0,-150.00);
 	glPopMatrix();
 	/* black plastic flange */	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_black_plastic.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_black_plastic.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_black_plastic.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_black_plastic.ambient);
+	glMaterialColor(ms_black_plastic);
 	glRotated( 90,0,1,0);
 	glCylinder( 9.25,  0.5, 185.05, 0.0,41.625);
 	glCylinder( 9.25,  0.5, 114.95, 0.0,41.625);
@@ -192,10 +183,7 @@ void glF2beamline(void){
 /* Q Magnet */
 void glQmagnet(void){
 	/* Frame */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Qframe.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Qframe.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Qframe.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Qframe.ambient);	
+	glMaterialColor(ms_Qframe);
 	double y0 =-150*sqrt(2-2*cos(PI/4))*cos(PI/8);
 	double z0 =-150*sqrt(2-2*cos(PI/4))*sin(PI/8);
 	glPushMatrix();
@@ -204,10 +192,7 @@ void glQmagnet(void){
 	glRectangular( 40.0, 57.0, 57.0,235.950, 0.0,-150.00);
 	glPopMatrix();
 	/* Magnets */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Qmagnet.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Qmagnet.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Qmagnet.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Qmagnet.ambient);
+	glMaterialColor(ms_Qmagnet);
 	double R = 28.4;
 	double L = (37.0-sqrt(50))/2;
 	double offset = 15;
@@ -229,10 +214,7 @@ void glQmagnet(void){
 /* acryl chamber */
 void glAcrylChamber(void){
 	/* screw */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+	glMaterialColor(ms_metal);
 	glRotated( 90,0,1,0);
 	for(int i=0;i<12;++i){
 		double r = 4.20;
@@ -242,10 +224,7 @@ void glAcrylChamber(void){
 	}
 	glRotated(-90,0,1,0);
 	/* O-ring */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_black_rubber.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_black_rubber.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_black_rubber.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_black_rubber.ambient);	
+	glMaterialColor(ms_black_rubber);
 	glRotated( 90,0,1,0);
 	glPipe( 3.90,0.20,0.20,152.45, 0.0, 0.0);
 	glRotated(-90,0,1,0);
@@ -254,27 +233,18 @@ void glAcrylChamber(void){
 	glTranslated(0,0,-150);
 	glRotated( 45,0,1,0);
 	glCylinder(1.50,0.11,0,0,0);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+	glMaterialColor(ms_metal);
 	glRectangular(0.1,3.5,4.0,0,0,0);
 	glPopMatrix();
 	/* kapton film */
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_kapton.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_kapton.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_kapton.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_kapton.ambient);	
+	glMaterialColor(ms_kapton);
 	glRotated( 90,0,1,0);
 	glCylinder( 3.40, 0.05,152.70, 0.0, 0.0);
 	glRotated(-90,0,1,0);
 	/* acryl */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_acryl.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_acryl.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_acryl.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_acryl.ambient);	
+	glMaterialColor(ms_acryl);
 	for(int i=0;i<2;++i){
 		glPipe(1.50,0.10,6.3,pow(-1,i)* 7.35, 0.0,-150.0);
 		glPipe(2.35,0.85,0.2,pow(-1,i)*10.40, 0.0,-150.0);
@@ -302,24 +272,15 @@ void glAlFrame(double L, double x, double y, double z){
 	L += m;
 	const double l = 4.0;
 	/* Aluminium */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Aluminium.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Aluminium.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Aluminium.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Aluminium.ambient);	
+	glMaterialColor(ms_Aluminium);
 	glRectangular(L,l/3,l/3,x,y+l/3,z+l/3);
 	glRectangular(L,l/3,l/3,x,y+l/3,z-l/3);
 	glRectangular(L,l/3,l/3,x,y-l/3,z+l/3);
 	glRectangular(L,l/3,l/3,x,y-l/3,z-l/3);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Aluminium2.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Aluminium2.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Aluminium2.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Aluminium2.ambient);	
+	glMaterialColor(ms_Aluminium2);
 	glRectangular(L,l/3,l/3,x,y,z);
 	/* rid */	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Alframerid.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Alframerid.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Alframerid.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Alframerid.ambient);	
+	glMaterialColor(ms_Alframerid);
 	const double d = 0.3;
 	glRectangular(d,l-m,l-m,x+(L+d)/2,y,z);
 	glRectangular(d,l-m,l-m,x-(L+d)/2,y,z);
@@ -328,10 +289,7 @@ void glAlFrame(double L, double x, double y, double z){
 
 /* L-Shaped Mold Steel Function */
 void glMoldSteelL(double L, int e1, double theta, int e2, double phi, double x, double y, double z){
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_moldsteel.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_moldsteel.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_moldsteel.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_moldsteel.ambient);
+	glMaterialColor(ms_moldsteel);
 	glPushMatrix();
 	glTranslated(x,y,z);
 	switch(e2){
@@ -417,10 +375,7 @@ void glFoundation(void){
 		glRotated( 90,0,0,1);
 		glAlFrame(64,7,-px-4,12);
 		glRotated(-90,0,0,1);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+		glMaterialColor(ms_metal);
 		glRectangular(4,8,8,px,py,8);
 		glRectangular(0.2,3,3,px+1.5,py,8);
 		glRectangular(0.2,3,3,px-1.5,py,8);
@@ -435,10 +390,7 @@ void glFoundation(void){
 		glRotated(-90,0,1,0);
 	}
 	/* prop */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+	glMaterialColor(ms_metal);
 	for(int i=0;i<2;++i){
 		glRectangular(4.2,y_max*3/4,0.6,pow(-1,i)*50.9, y_max*5/8,5.7);
 		glRectangular(3.0,y_max*2  ,0.6,pow(-1,i)*51.5,       0.0,5.7);
@@ -458,10 +410,7 @@ void glFoundation(void){
 		glRotated(-90,0,1,0);
 	}
 	/* lead block */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_lead.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_lead.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_lead.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_lead.ambient);	
+	glMaterialColor(ms_lead);
 	for(int i=0;i<4;++i){
 		glRectangular(20,5,10,pow(-1,i/2)*(L1/2-10),-Hbeam+2.5,pow(-1,i)*(L3/2+9));
 		glRectangular(10,5,20,pow(-1,i/2)*(L1/2+5.3),-Hbeam+2.5,pow(-1,i)*(L3/2+4));
@@ -493,10 +442,7 @@ void glFoundation(void){
 	}
 	glRotated(-90,0,0,1);
 	/* Caster */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);	
+	glMaterialColor(ms_metal);
 	for(int i=0;i<4;++i){
 		glRectangular(12,0.2,16,pow(-1,i)*(L5/2-2),-Hbeam+4.9,-196+pow(-1,i/2)*(L5/2-4));	
 		glRotated( 90,0,0,1);
@@ -507,10 +453,7 @@ void glFoundation(void){
 	/* Acryl Board */
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_acryl.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_acryl.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_acryl.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_acryl.ambient);	
+	glMaterialColor(ms_acryl);
 	glRectangular(L5+5.0,1.0,L5-5.0,0,-65.5,-196);
 	glDisable(GL_BLEND);
 	/* Li Glass Foundation */
@@ -529,10 +472,7 @@ void glFoundation(void){
 		glMoldSteelL(L8,3,90,2,90*i,(L7/2-2.2)*A,y0-L8/2,-150+(L7/2-2.2)*B);
 	}
 	/* Beta Pla Foundation */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_white_plastic.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_white_plastic.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_white_plastic.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_white_plastic.ambient);
+	glMaterialColor(ms_white_plastic);
 	glRectangular(1.5,1.0,6.5,0.0,4.0,-160.0);
 }
 
@@ -557,10 +497,7 @@ void glENcourse(void){
 
 /* neutron detector TUNA */
 void glTUNA(void){
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_TUNA.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_TUNA.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_TUNA.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_TUNA.ambient);	
+	glMaterialColor(ms_TUNA);
 	/* define vertex */
 	double pla[8][3];
 	double lgd[8][3];
@@ -684,20 +621,14 @@ void glTUNA(void){
 		glEnd();
 	}
 	/* PMT (H-11934) */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_PMT.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_PMT.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_PMT.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_PMT.ambient);	
+	glMaterialColor(ms_PMT);
 	double lx = 3.25;
 	double ly = 3.00;
 	double lz = 3.00;
 	glRectangular(lx,ly,lz, (x_pmt+lx/2), 0.0, 0.0);
 	glRectangular(lx,ly,lz,-(x_pmt+lx/2), 0.0, 0.0);
 	/* cooling system (duct) */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_duct.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_duct.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_duct.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_duct.ambient);	
+	glMaterialColor(ms_duct);
 	glPipe( 3.50,0.1,18.90, (x_lgd+11.95), 0.0, 0.0);
 	glPipe( 3.50,0.1,18.90,-(x_lgd+11.95), 0.0, 0.0);
 	glRotated( 90,0,0,1);
@@ -711,10 +642,7 @@ void glTUNA(void){
 	glPipe( 0.30,0.10,2.50,-4.45,-(x_lgd+18.90), 0.0);
 	glPopMatrix();
 	/* cooling system (metal parts) */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_metal.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_metal.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_metal.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_metal.ambient);
+	glMaterialColor(ms_metal);
 	for(int i=0;i<8;++i){
 		glHexagon( 0.60,0.5,pow(-1,1-i/4)*(x_lgd+1.45),pow(-1,1-i/2)*5.0,pow(-1,1-i)*2.2);
 	}
@@ -861,10 +789,7 @@ void glTUNA(void){
 		glEnd();
 	}
 	/* brass hex */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_brass.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_brass.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_brass.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_brass.ambient);
+	glMaterialColor(ms_brass);
 	double Lhex = x_lgd - x_max + 0.5;
 	for(int i=0;i<8;++i){
 		glHexagon( 0.30,Lhex,pow(-1,i/4)*(x_max+Lhex/2),pow(-1,i/2)*5.0,pow(-1,i)*2.2);
@@ -872,17 +797,11 @@ void glTUNA(void){
 		glCylinder(0.30,1.40,pow(-1,i/4)*(x_max+Lhex+0.7),pow(-1,i/2)*5.0,pow(-1,i)*2.2);
 	}
 	/* Derlin flange */	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_white_plastic.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_white_plastic.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_white_plastic.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_white_plastic.ambient);	
+	glMaterialColor(ms_white_plastic);
 	glCylinder( 4.65, 0.70, (x_lgd+ 1.55), 0.0, 0.0);
 	glCylinder( 4.65, 0.70,-(x_lgd+ 1.55), 0.0, 0.0);
 	/* End flange */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_black_plastic.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_black_plastic.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_black_plastic.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_black_plastic.ambient);	
+	glMaterialColor(ms_black_plastic);
 	glCylinder( 4.65, 0.70, (x_lgd+22.25), 0.0, 0.0);
 	glCylinder( 4.65, 0.70,-(x_lgd+22.25), 0.0, 0.0);
 }
@@ -893,10 +812,7 @@ void glMAGRO(void){
 	glPushMatrix();
 	glTranslated(0.0,0.0,-150.0);
 	glRotated( 26,1,0,0);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_MAGRO.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_MAGRO.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_MAGRO.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_MAGRO.ambient);
+	glMaterialColor(ms_MAGRO);
 	/* define vertex */
 	const int N   =   300; /* N-sided polygon */
 	double R      = 150.0;
@@ -1006,10 +922,7 @@ void glMAGRO(void){
 		glEnd();
 	}
 	/* PMT(H1161) */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_PMT.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_PMT.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_PMT.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_PMT.ambient);
+	glMaterialColor(ms_PMT);
 	glRotated( 30.6,0,1,0);
 	glCylinder(3.5, 1.5,  0.0,0.0,R-d/2);
 	glCylinder(3.0,20.0, 10.0,0.0,R-d/2);
@@ -1028,10 +941,7 @@ void glBetaPlastic(void){
 	double zoff = -153.3;
 	glTranslated(+xoff,+yoff,+zoff);
 
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_betapla.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_betapla.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_betapla.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_betapla.ambient);	
+	glMaterialColor(ms_betapla);
 	double d   = 0.2;
 	double lx1 = 2.0;
 	double lx2 = 4.0;
@@ -1276,10 +1186,7 @@ void glBetaPlastic(void){
 void glChibitaku(void){
 	/* Dewar */
 	double r = 21.0;
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_dewar.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_dewar.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_dewar.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_dewar.ambient);	
+	glMaterialColor(ms_dewar);
 	/* define vertex */
 	const int N   =    100; /* N-sided polygon */
 	const int M   =    200;
@@ -1362,26 +1269,17 @@ void glChibitaku(void){
 	glCylinder(3.0, 4.0,-10.3,0.0,z0+4.3);
 	glRotated(-90,0,0,1);
 	/* Paint */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_paint.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_paint.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_paint.diffuse);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_paint.ambient);	
+	glMaterialColor(ms_paint);
 	glRotated( 90,0,0,1);
 	glPipe(r+0.01,0.1,5.0,-33.0,0.0,z0);
 	glPipe(r+0.01,0.1,5.0,-55.0,0.0,z0);
 	glRotated(-90,0,0,1);
 	/* Crystal */	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_white_plastic.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_white_plastic.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_white_plastic.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_white_plastic.ambient);
+	glMaterialColor(ms_white_plastic);
 	glRotated( 90,0,0,1);
 	glCylinder(4.0, 1.5, -7.3,0.0,z0+4.3);
 	glRotated(-90,0,0,1);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Ge.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Ge.shininess);	
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Ge.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Ge.ambient);
+	glMaterialColor(ms_Ge);
 	glRotated( 90,0,1,0);
 	glCylinder(3.5,10.0,-(z0+36.3),0.0,0.0);
 	glCylinder(3.8,10.0,-(z0+26.3),0.0,0.0);
@@ -1393,10 +1291,7 @@ void glChibitaku(void){
 	glCylinder(4.0, 1.5, -7.3-1.5,0.0,z0+4.3);
 	glRotated(-90,0,0,1);
 	/* Window Cap */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Gecap.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Gecap.shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Gecap.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Gecap.ambient);
+	glMaterialColor(ms_Gecap);
 	glRotated( 90,0,1,0);
 	glCylinder(3.8, 2.0,-(z0+41.3),0.0,0.0);
 	glRotated(-90,0,1,0);
@@ -1407,19 +1302,13 @@ void glChibitaku(void){
 /* LiGlass */
 void glLiGlass(void){
 	/* Body */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Liglass.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Liglass.shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Liglass.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Liglass.ambient);
+	glMaterialColor(ms_Liglass);
 	glRotated( 90,0,0,1);
 	glPipe(R_Li+d_Li,d_Li,L_Li,y_Li-L_Li/2,x_Li,z_Li);	
 	glPipe(r3_Li,d_Li,l3_Li,y_Li-L_Li-l3_Li/2,x_Li,z_Li);
 	glRotated(-90,0,0,1);
 	/* Magnetic Shield */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_magshield.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_magshield.shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_magshield.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_magshield.ambient);
+	glMaterialColor(ms_magshield);
 	glRotated( 90,0,0,1);
 	glPipe(r2_Li,d_Li,l2_Li,y_Li-l2_Li/2,x_Li,z_Li);
 	glRotated(-90,0,0,1);
@@ -1529,19 +1418,13 @@ void glLiGlass(void){
 	/* Li */
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_Li.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_Li.shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_Li.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_Li.ambient);
+	glMaterialColor(ms_Li);
 	glRotated( 90,0,0,1);
 	glCylinder(R_Li,L_Li,y_Li-L_Li/2,x_Li,z_Li);
 	glRotated(-90,0,0,1);
 	glDisable(GL_BLEND);
 	/* PMT */
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_PMT.specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_PMT.shininess);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_PMT.diffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_PMT.ambient);
+	glMaterialColor(ms_PMT);
 	glRotated( 90,0,0,1);
 	glCylinder(r4_Li,l4_Li,y_Li-L_Li-l4_Li/2,x_Li,z_Li);
 	glRotated(-90,0,0,1);

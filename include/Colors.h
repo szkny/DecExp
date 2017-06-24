@@ -3,6 +3,7 @@
 
 /************ Material Color Structure ************/
 /********** by M.J.Kilgard & M.Yamamoto ***********/
+#include<glut.h>
 
 struct MaterialStruct {
 	GLfloat ambient[4];
@@ -10,6 +11,14 @@ struct MaterialStruct {
 	GLfloat specular[4];
 	GLfloat shininess[1];
 };
+
+/* 3D-Object Color Setting */
+inline void glMaterialColor(struct MaterialStruct ms_X){
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ms_X.specular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS,ms_X.shininess);	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  ms_X.diffuse);	
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ms_X.ambient);	
+}
 
 /* ruby(ルビー) */
 MaterialStruct ms_ruby  = {

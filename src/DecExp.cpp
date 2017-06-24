@@ -11,7 +11,7 @@
 #include<time.h>
 #include<string.h>
 
-#include<GL/glut.h>
+#include<glut.h>
 #include<GraphDecExp.h>
 
 /* Number of Windows */
@@ -356,8 +356,8 @@ void motion(int x, int y){
 				if(theta>2*PI) theta -= 2*PI;
 				if(theta<0)    theta += 2*PI;
 				phi +=-(ymouse-y)*PI/180*Rspeed;
-				if(phi>= PI/2) phi = PI/2-0.1*PI/180;
-				if(phi<=-PI/2) phi =-PI/2+0.1*PI/180;
+				if(phi> PI/2) phi = PI/2-0.1*PI/180;
+				if(phi<-PI/2) phi =-PI/2+0.1*PI/180;
 				double ex = xc+dstnc*cos(phi)*sin(theta);
 				double ey = yc+dstnc*sin(phi);
 				double ez = zc+dstnc*cos(phi)*cos(theta);

@@ -8,7 +8,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#include<GL/glut.h>
+#include<glut.h>
 
 #include"MyGLUT.h"
 #include"Object.h"
@@ -77,7 +77,7 @@ const int ARRAY2  = t_max/bin2;
 int hist_Li[ARRAY2] = {0};
 
 /* histogram for Neutron Hit Point (0~150ch : 75ch = center) */
-const double dPos = 1.0;
+const double dPos = 0.5;
 const int XARRAY  = (x_pmt+5)*2/dPos;
 const int YARRAY  = (y_max+5)*2/dPos;
 int TH2D_TUNA_HitPos[XARRAY*YARRAY] = {};

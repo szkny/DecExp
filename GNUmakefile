@@ -8,8 +8,16 @@ INCLUDE  = -I./include
 EXEDIR   = ./bin
 
 COMPILER = g++
-CFLAGS   = -Wall -O2 -mmacosx-version-min=10.8
+
+# cross platform make
+UNAME   := $(shell uname)
+ifeq ($(UNAME), Darwin)
+CFLAGS  += -Wall -O2 -mmacosx-version-min=10.8
 FRAME    = -framework GLUT -framework OpenGL 
+endif
+ifeq ($(UNAME), Linux)
+CFLAGS  += -w -O2 -I/usr/X11R6/include -L/usr/X11R6/lib -lglut -lGLU -lGL -lXmu -lXi -lXext -lX11 -lm -lpthread
+endif
 
 SOURCES  = $(wildcard $(SRCDIR)/*$(SUFFIX))
 OBJECTS  = $(notdir $(SOURCES:$(SUFFIX)=.o))

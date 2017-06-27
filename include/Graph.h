@@ -2,7 +2,7 @@
 #define Graph_h_
 /**************************************************************/
 
-#include<glut.h>
+#include<GLUT/glut.h>
 #include"MyGLUT.h"
 
 

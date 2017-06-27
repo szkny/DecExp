@@ -8,7 +8,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#include<glut.h>
+#include<GLUT/glut.h>
 
 #include"MyGLUT.h"
 #include"Object.h"

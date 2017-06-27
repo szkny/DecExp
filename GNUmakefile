@@ -4,11 +4,11 @@
 SUFFIX   = .cpp
 
 SRCDIR   = ./src
-INCLUDE  = -I./include -I/System/Library/Frameworks/GLUT.framework/Headers
+INCLUDE  = -I./include
 EXEDIR   = ./bin
 
 COMPILER = g++
-CFLAGS   = -w -O2
+CFLAGS   = -Wall -O2 -mmacosx-version-min=10.8
 FRAME    = -framework GLUT -framework OpenGL 
 
 SOURCES  = $(wildcard $(SRCDIR)/*$(SUFFIX))

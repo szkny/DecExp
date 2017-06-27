@@ -8,7 +8,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+
+#ifdef __APPLE__
 #include<GLUT/glut.h>
+#endif
+
+#ifdef linux
+#include<GL/glut.h>
+#endif
 
 #include"MyGLUT.h"
 #include"Object.h"
